@@ -1,0 +1,22 @@
+#!/bin/bash
+
+
+mkdir -p /etc/icingaweb2/modules
+chown www-data:icingaweb2 /etc/icingaweb2 /etc/icingaweb2/modules
+chmod u=rwx,g=rwxs,o= /etc/icingaweb2 /etc/icingaweb2/modules
+
+# Handle initial configuration of Icinga Web 2
+if [ ! -f /etc/icingaweb2/config.ini ]; then
+  # Create a setup token if there isn't one
+  echo "######################################################################"
+  if [ ! -f /etc/icingaweb2/setup.token ]; then
+    icingacli setup config directory --group icingaweb2;
+    icingacli setup token create;
+  else
+    echo "The setup token is: $(cat /etc/icingaweb2/setup.token)"
+  fi
+  echo "You will need this to configure Icinga Web 2."
+  echo "######################################################################"
+  chown www-data:icingaweb2 /etc/icingaweb2/setup.token
+fi
+
